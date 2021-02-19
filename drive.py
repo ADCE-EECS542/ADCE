@@ -3,48 +3,48 @@ import os
 import csv
 import time
 
+# import RPI.GPIO as GPIO
+# import GPIO as GPIO
+motorFront1 = 50
+motorFront2 = 50
+data = []
+
+
 class Collector:
 
-    def __init__(self, fileName='data/data.csv'): #pass in the file name
-        file = open(fileName, 'a')
-        self.writer = csv.writer(file)
-        print('s')
+    def write(self):  # write stored data into file for return purpose
+        with open("data/data.txt", "w") as txt_file:
+            for line in data:
+                txt_file.write(" ".join(line))
 
-    def write(self, direction):
-        self.writer.writerow(direction)
 
 class Controller:
 
-    def set_motors(self, left_speed, left_dir, right_speed, right_dir):
-        print('s')
-        #self.left_pwm.ChangeDutyCycle(left_go * 100)
-        #GPIO.output(self.LEFT_DIR_PIN, left_dir)
-        #self.right_pwm.ChangeDutyCycle(right_go * 100)
-        #GPIO.output(self.RIGHT_DIR_PIN, right_dir)
+    def setMotors(self, motor1, motor2, seconds):  # motors variable, and time hold
 
-    def forward(self, seconds, speed):
-        self.set_motors(speed, 0, speed, 0)
-        if seconds > 0:
-            time.sleep(seconds)
-            self.stop()
+        while seconds:
+            time.sleep(1)
+            print(seconds)
+            seconds -= 1
+            # GPIO.output(self.MotorFront1, motor1)
+            # GPIO.output(self.MotorFront2, motor2)
+        # GPIO.output(self.MotorFront1, 0)
+        # GPIO.output(self.MotorFront2, 0)
 
-    def stop(self):
-        self.set_motors(0, 0, 0, 0)
 
-    def reverse(self, seconds, speed):
-        self.set_motors(speed, 1, speed, 1)
-        if seconds > 0:
-            time.sleep(seconds)
-            self.stop()
+def main():
+    Ctr = Controller()
+    Clt = Collector()
+    f = open("data/route.txt", "r")
+    for i in f:  # slicing string
+        if i[0] == 'w':
+            Ctr.setMotors(motorFront1, motorFront2, int(i[2:]))
+            print(i[2:])
+        data.append(i)
+    print(data[2:])
+    Clt.write()
 
-    def left(self, seconds, speed):
-        self.set_motors(speed, 0, speed, 1)
-        if seconds > 0:
-            time.sleep(seconds)
-            self.stop()
 
-    def right(self, seconds, speed):
-        self.set_motors(speed, 1, speed, 0)
-        if seconds > 0:
-            time.sleep(seconds)
-            self.stop()
+main()
+
+#
